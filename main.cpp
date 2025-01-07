@@ -1,48 +1,158 @@
+#include "cal_curse.h"
+#include "cal_agrement.h"
+#include "antrenament.h"
+#include "plimbare.h"
+#include "herghelie_factory.h"
+#include "manager_herghelie.h"
+#include "exceptii.h"
+#include "gestiune.h"
 #include <iostream>
-#include <array>
+#include <limits>
+
+void afiseazaMeniu() {
+    std::cout << "\n=== MENIU HERGHELIE ===\n";
+    std::cout << "1. Adauga cal de curse\n";
+    std::cout << "2. Adauga cal de agrement\n";
+    std::cout << "3. Adauga antrenament\n";
+    std::cout << "4. Adauga plimbare\n";
+    std::cout << "5. Afiseaza toti caii\n";
+    std::cout << "6. Afiseaza toate activitatile\n";
+    std::cout << "7. Cauta cal dupa nume\n";
+    std::cout << "8. Cauta activitate dupa nume\n";
+    std::cout << "0. Iesire\n";
+    std::cout << "Alegeti o optiune: ";
+}
+
+void clearInputStream() {
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
 
 int main() {
-    std::cout << "Hello, world!\n";
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
-    }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
-    }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
+    ManagerHerghelie* manager = ManagerHerghelie::getInstanta();
+    HerghelieFactory factory;
+    int optiune;
+
+    do {
+        afiseazaMeniu();
+        std::cin >> optiune;
+        clearInputStream();
+
+        try {
+            switch (optiune) {
+                case 1: {
+                    std::cout << "\nIntroduceti datele calului de curse:\n";
+                    std::string nume, rasa;
+                    int varsta;
+
+                    std::cout << "Nume: ";
+                    std::getline(std::cin, nume);
+                    std::cout << "Rasa: ";
+                    std::getline(std::cin, rasa);
+                    std::cout << "Varsta: ";
+                    std::cin >> varsta;
+
+                    Cal* cal = factory.creeazaCal("Curse", nume, rasa, varsta);
+                    manager->adaugaCal(cal);
+                    std::cout << "Cal de curse adaugat cu succes!\n";
+                    break;
+                }
+                case 2: {
+                    std::cout << "\nIntroduceti datele calului de agrement:\n";
+                    std::string nume, rasa;
+                    int varsta;
+
+                    std::cout << "Nume: ";
+                    std::getline(std::cin, nume);
+                    std::cout << "Rasa: ";
+                    std::getline(std::cin, rasa);
+                    std::cout << "Varsta: ";
+                    std::cin >> varsta;
+
+                    Cal* cal = factory.creeazaCal("Agrement", nume, rasa, varsta);
+                    manager->adaugaCal(cal);
+                    std::cout << "Cal de agrement adaugat cu succes!\n";
+                    break;
+                }
+                case 3: {
+                    std::cout << "\nIntroduceti datele antrenamentului:\n";
+                    std::string nume, data;
+
+                    std::cout << "Nume antrenament: ";
+                    std::getline(std::cin, nume);
+                    std::cout << "Data (YYYY-MM-DD): ";
+                    std::getline(std::cin, data);
+
+                    Activitate* activitate = factory.creeazaActivitate("Antrenament", nume, data);
+                    manager->adaugaActivitate(activitate);
+                    std::cout << "Antrenament adaugat cu succes!\n";
+                    break;
+                }
+                case 4: {
+                    std::cout << "\nIntroduceti datele plimbarii:\n";
+                    std::string nume, data;
+
+                    std::cout << "Nume plimbare: ";
+                    std::getline(std::cin, nume);
+                    std::cout << "Data (YYYY-MM-DD): ";
+                    std::getline(std::cin, data);
+
+                    Activitate* activitate = factory.creeazaActivitate("Plimbare", nume, data);
+                    manager->adaugaActivitate(activitate);
+                    std::cout << "Plimbare adaugata cu succes!\n";
+                    break;
+                }
+                case 5: {
+                    std::cout << "\nLista tuturor cailor:\n";
+                    manager->afiseazaCai();
+                    break;
+                }
+                case 6: {
+                    std::cout << "\nLista tuturor activitatilor:\n";
+                    manager->afiseazaActivitati();
+                    break;
+                }
+                case 7: {
+                    std::string nume;
+                    std::cout << "Introduceti numele calului: ";
+                    std::getline(std::cin, nume);
+
+                    Cal* cal = manager->gasesteCal(nume);
+                    if (cal) {
+                        std::cout << "\nCal gasit:\n" << *cal << "\n";
+                    } else {
+                        std::cout << "Cal negasit!\n";
+                    }
+                    break;
+                }
+                case 8: {
+                    std::string nume;
+                    std::cout << "Introduceti numele activitatii: ";
+                    std::getline(std::cin, nume);
+
+                    Activitate* activitate = manager->gasesteActivitate(nume);
+                    if (activitate) {
+                        std::cout << "\nActivitate gasita:\n" << *activitate << "\n";
+                    } else {
+                        std::cout << "Activitate negasita!\n";
+                    }
+                    break;
+                }
+                case 0:
+                    std::cout << "La revedere!\n";
+                    break;
+                default:
+                    std::cout << "Optiune invalida!\n";
+            }
+        }
+        catch (const ExceptieHerghelie& e) {
+            std::cout << "Eroare: " << e.what() << "\n";
+        }
+        catch (const std::exception& e) {
+            std::cout << "Eroare neasteptata: " << e.what() << "\n";
+        }
+
+    } while (optiune != 0);
+
     return 0;
 }
